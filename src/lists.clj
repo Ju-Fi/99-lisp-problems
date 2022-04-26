@@ -124,7 +124,7 @@
    (map #(list % %) coll)))
 
 ;; Problem 15
-(defn replicate
+(defn my-replicate
   [coll]
   (my-flatten
    (map #(list % % %) coll)))
@@ -140,6 +140,46 @@
 (defn my-split
   [coll len]
   (list (take len coll) (take-last (- (count coll) len) coll)))
+
+;; Problem 18
+(defn slice
+  [coll start end]
+  (if-not (= start end)
+    (take (inc (- (count coll) end)) (nthrest coll start))
+    (list (nth coll start))))
+
+;; Problem 19
+(defn rotate
+  [coll n]
+  (if (neg-int? n)
+    (concat (take-last (* -1 n) coll) (take (+ (count coll) n) coll))
+    (concat (take-last (- (count coll) n) coll) (take n coll))))
+
+;; Problem 20
+(defn remove-at
+  [n coll]
+  (when (pos-int? n)
+    (concat (take-while #(not= % (nth coll n)) coll)
+            (take-last (- (count coll) (inc n)) coll))))
+
+;; Problem 21
+(defn insert-at
+  [x n coll]
+  (concat (slice coll 0 (dec n)) [x] (nthrest coll n)))
+
+;; Problem 22
+(defn my-range
+  [start end]
+  (let [op (if (> start end)
+                (partial dec)
+                (partial inc))]
+  (take-while #(not= % (op end)) (iterate op start))))
+
+;; Problem 23
+(defn rand-select
+  [coll n]
+  (for [i (range n)]
+    (rand-nth coll)))
 
 (comment
   (my-last '(1 2 3 4))
@@ -158,7 +198,13 @@
   (modified-decode (modified-encode '(1 1 1 1 2 3 3 1 1 4 5 5 5 5)))
   (encode-direct '(1 1 1 1 2 3 3 1 1 4 5 5 5 5))
   (duplicate '(1 2 3 3 4))
-  (replicate '(1 2 3 3 4))
+  (my-replicate '(1 2 3 3 4))
   (my-drop '(1 2 3 4 5 6 7 8 9 10) 3)
   (my-split '(1 2 3 4 5 6 7 8 9 10) 3)
+  (slice '(1 2 3 4 5 6 7 8 9 10) 2 6)
+  (rotate '(1 2 3 4 5 6 7 8 9 10) 2)
+  (remove-at 1 '(1 2 3 4))
+  (insert-at "hi" 1 '(1 2 3 4))
+  (my-range 4 9)
+  (rand-select '(1 2 3 4 5 6 7 8 9 10) 3)
 )
